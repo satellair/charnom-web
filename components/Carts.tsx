@@ -28,76 +28,6 @@ interface CartProps extends BoxProps {
   onClose: () => void;
 }
 
-// const cart = [
-//   {
-//     id: 1,
-//     name: 'Signature Charnom',
-//     image:
-//       'https://i.pinimg.com/564x/13/72/98/1372984fa30b23c59157499167ea64d9.jpg',
-//     price: 45,
-//     qty: 1,
-//   },
-
-//   {
-//     id: 2,
-//     name: 'Signature Charnom',
-//     image:
-//       'https://i.pinimg.com/564x/13/72/98/1372984fa30b23c59157499167ea64d9.jpg',
-//     price: 45,
-//     qty: 1,
-//   },
-
-//   {
-//     id: 3,
-//     name: 'Signature Charnom',
-//     image:
-//       'https://i.pinimg.com/564x/13/72/98/1372984fa30b23c59157499167ea64d9.jpg',
-//     price: 45,
-//     qty: 1,
-//   },
-//   // {
-//   //   id: 4,
-//   //   name: 'Signature Charnom',
-//   //   image:
-//   //     'https://i.pinimg.com/564x/13/72/98/1372984fa30b23c59157499167ea64d9.jpg',
-//   //   price: 45,
-//   //   qty: 1,
-//   // },
-//   // {
-//   //   id: 5,
-//   //   name: 'Signature Charnom',
-//   //   image:
-//   //     'https://i.pinimg.com/564x/13/72/98/1372984fa30b23c59157499167ea64d9.jpg',
-//   //   price: 45,
-//   //   qty: 1,
-//   // },
-//   // {
-//   //   id: 6,
-//   //   name: 'Signature Charnom',
-//   //   image:
-//   //     'https://i.pinimg.com/564x/13/72/98/1372984fa30b23c59157499167ea64d9.jpg',
-//   //   price: 45,
-//   //   qty: 1,
-//   // },
-//   // {
-//   //   id: 7,
-//   //   name: 'Signature Charnom',
-//   //   image:
-//   //     'https://i.pinimg.com/564x/13/72/98/1372984fa30b23c59157499167ea64d9.jpg',
-//   //   price: 45,
-//   //   qty: 1,
-//   // },
-//   // {
-//   //   id: 8,
-//   //   name: 'Signature Charnom',
-//   //   image:
-//   //     'https://i.pinimg.com/564x/13/72/98/1372984fa30b23c59157499167ea64d9.jpg',
-//   //   price: 45,
-//   //   qty: 1,
-//   // },
-// ];
-
-
 const Cart = ({ isOpen, onClose, ...rest }: CartProps) => {
   const cart = useSelector(state => state.cartReducer.cart);
   const total = useSelector(state => state.cartReducer.total);
@@ -152,6 +82,7 @@ const Cart = ({ isOpen, onClose, ...rest }: CartProps) => {
                         roundedLeft="md"
                         objectFit="cover"
                         boxSize={'100px'}
+                        loading='lazy'
                       />
                       <VStack>
                         <HStack mt="-2" w="100%">

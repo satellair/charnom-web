@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -21,6 +21,9 @@ import Cart from '../components/Carts';
 
 import { addToCart } from '../redux/actions/cartAction';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { database } from '../firebase/firebaseConfig';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
 
 const ProductItem = [
   {
@@ -69,6 +72,11 @@ export default function IndexPage({ children }: { children: NextPage }) {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cartReducer.cart);
   const total = useSelector((state) => state.cartReducer.total);
+  const [productsList, setProductsList] = useState([]);
+
+  const customersInstance = collection(database, 'customers');
+  const productsInstance = collection(database, 'products');
+  const ordersInstance = collection(database, 'orders');
 
   const {
     isOpen: isOpenSidebarDrawer,
@@ -91,6 +99,20 @@ export default function IndexPage({ children }: { children: NextPage }) {
       qty: 1,
     };
     dispatch(addToCart(product, cart));
+  };
+
+  useEffect(() => {
+    getMenu();
+  }, []);
+
+  const getMenu = () => {
+    getDocs(productsInstance).then((products) => {
+      setProductsList(
+        products.docs.map((item) => {
+          return { ...item.data(), id: item.id };
+        })
+      );
+    });
   };
 
   return (
@@ -133,7 +155,7 @@ export default function IndexPage({ children }: { children: NextPage }) {
             spacing={{ base: 10, md: 5, lg: 10 }}
             p={{ base: 10, md: 5, lg: 10 }}
           >
-            {ProductItem.map((product) => {
+            {productsList.map((product) => {
               return (
                 <Flex w="full" alignItems="center">
                   <Box
@@ -149,6 +171,7 @@ export default function IndexPage({ children }: { children: NextPage }) {
                       roundedTop="lg"
                       objectFit="cover"
                       boxSize={{ base: '40vw', md: '20vw' }}
+                      loading="lazy"
                     />
 
                     <Box p="4">
