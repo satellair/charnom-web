@@ -25,6 +25,7 @@ export default function NoteOperations() {
   const addDesc = (value) => {
     setNoteDesc(value);
   };
+  // addDoc to send document(the row of data) to database
   const saveNote = () => {
     addDoc(dbInstance, {
       noteTitle: noteTitle,
@@ -35,6 +36,7 @@ export default function NoteOperations() {
       getNotes();
     });
   };
+  // getDocs to get all the data from database then map the item to split in to array
   const getNotes = () => {
     getDocs(dbInstance).then((data) => {
       setNotesArray(
