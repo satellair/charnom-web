@@ -56,6 +56,7 @@ export default function NoteOperations() {
   const getMenu = () => {
     getDocs(productsInstance).then((products) => {
       setProductsList(
+        //@ts-ignore
         products.docs.map((item) => {
           return { ...item.data(), id: item.id };
         })
@@ -66,7 +67,7 @@ export default function NoteOperations() {
   return (
     <>
       <Container>
-        {productsList.map((product) => {
+        {productsList.map((product:any) => {
           return (
             <>
               <Flex>{product.name}</Flex>

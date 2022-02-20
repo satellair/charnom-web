@@ -5,7 +5,9 @@ export const addToCart = (product = {}, cart = []) => {
 
   if (cart.length > 0) {
     for (const c of cart) {
+      //@ts-ignore
       if (c.id === product.id) {
+        //@ts-ignore
         c.qty++;
         exists = true;
       }
@@ -13,9 +15,10 @@ export const addToCart = (product = {}, cart = []) => {
   }
 
   if (!exists) {
+    //@ts-ignore
     cart.push(product);
   }
-  
+  //@ts-ignore
   const total = cart.reduce((totalQty, product) => totalQty + product.qty, 0);
   
   return {

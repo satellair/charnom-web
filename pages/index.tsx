@@ -70,7 +70,9 @@ const ProductItem = [
 
 export default function IndexPage({ children }: { children: NextPage }) {
   const dispatch = useDispatch();
+  //@ts-ignore
   const cart = useSelector((state) => state.cartReducer.cart);
+  //@ts-ignore
   const total = useSelector((state) => state.cartReducer.total);
   const [productsList, setProductsList] = useState([]);
 
@@ -90,7 +92,7 @@ export default function IndexPage({ children }: { children: NextPage }) {
     onClose: onCloseCartDrawer,
   } = useDisclosure();
 
-  const addCart = (p) => {
+  const addCart = (p:any) => {
     const product = {
       id: p.id,
       name: p.name,
@@ -108,6 +110,7 @@ export default function IndexPage({ children }: { children: NextPage }) {
   const getMenu = () => {
     getDocs(productsInstance).then((products) => {
       setProductsList(
+        //@ts-ignore
         products.docs.map((item) => {
           return { ...item.data(), id: item.id };
         })
@@ -155,7 +158,7 @@ export default function IndexPage({ children }: { children: NextPage }) {
             spacing={{ base: 10, md: 5, lg: 10 }}
             p={{ base: 10, md: 5, lg: 10 }}
           >
-            {productsList.map((product) => {
+            {productsList.map((product:any) => {
               return (
                 <Flex w="full" alignItems="center">
                   <Box

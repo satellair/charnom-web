@@ -3,8 +3,8 @@ const initState = {
   cart: [],
   total: 0,
 };
-
-const cartReducer = (state = initState, action) => {
+//@ts-ignore
+const cartReducer = (state = initState, action ) => { 
   switch (action.type) {
     case ADD_TO_CART:
       return {

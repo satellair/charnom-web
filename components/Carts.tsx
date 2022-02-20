@@ -29,7 +29,9 @@ interface CartProps extends BoxProps {
 }
 
 const Cart = ({ isOpen, onClose, ...rest }: CartProps) => {
+  //@ts-ignore
   const cart = useSelector(state => state.cartReducer.cart);
+  //@ts-ignore
   const total = useSelector(state => state.cartReducer.total);
   const dispatch = useDispatch();
 
@@ -72,7 +74,7 @@ const Cart = ({ isOpen, onClose, ...rest }: CartProps) => {
           <DrawerBody>
             {/* product list */}
             <VStack m="5">
-              {cart.map((s, index) => {
+              {cart.map((s:any, index:number) => {
                 return (
                   <Box key={index} w="90%" rounded="lg" borderWidth="1px">
                     <HStack>
@@ -119,7 +121,7 @@ const Cart = ({ isOpen, onClose, ...rest }: CartProps) => {
 
           <DrawerFooter>
             <Flex justify="space-between" align="center" w="50%">
-              <Text>Total: {cart.reduce((acc, curr) => acc + curr.price, 0)}฿</Text>
+              <Text>Total: {cart.reduce((acc:any, curr:any) => acc + curr.price, 0)}฿</Text>
               <Spacer />
               <Button colorScheme="blue" onClick={onClose}>Order Now</Button>
             </Flex>
