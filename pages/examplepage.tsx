@@ -9,6 +9,7 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 //   typeof window === "object" ? require("react-quill") : () => false;
 
 export default function NoteOperations() {
+  // collection to connect to database and collection
   const dbInstance = collection(database, "notes");
   const [isInputVisible, setInputVisible] = useState(false);
   const [noteTitle, setNoteTitle] = useState("");
