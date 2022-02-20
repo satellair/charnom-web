@@ -7,7 +7,7 @@ import {
   Text,
   BoxProps,
 } from '@chakra-ui/react';
-import { FiShoppingCart, FiLogOut, FiLogIn, FiUser } from 'react-icons/fi';
+import { FiShoppingCart, FiLogOut, FiLogIn, FiClock } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import NavItem from './Navitem';
 
@@ -19,9 +19,10 @@ interface LinkItemProps {
   icon: IconType;
   link: string;
 }
+
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Shopping', icon: FiShoppingCart, link: '/' },
-  // { name: 'Profile', icon: FiUser, link: '/profile' },
+  // { name: 'Orders', icon: FiClock, link: '/order' },
   { name: 'Sign In', icon: FiLogIn, link: '/signin' },
   // { name: 'Sign Out', icon: FiLogOut, link: '/signout' },
 ];
