@@ -4,7 +4,7 @@ const initState = {
   profile: null,
 };
 
-const authReducer = (state = initState, action) => {
+const authReducer = (state = initState, action:any) => {
   switch (action.type) {
     case GET_PROFILE:
       return {
