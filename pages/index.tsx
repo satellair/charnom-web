@@ -134,7 +134,7 @@ export default function IndexPage({ children }: { children: NextPage }) {
           >
             {productsList.map((product:any) => {
               return (
-                <Flex w="full" alignItems="center">
+                <Flex w="full" alignItems="baseline">
                   <Box
                     bg={useColorModeValue('white', 'gray.800')}
                     w={{ base: '40vw', md: '20vw' }}

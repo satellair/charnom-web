@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   Box,
   CloseButton,
@@ -13,7 +13,6 @@ import NavItem from './Navitem';
 
 import { useRouter } from 'next/router';
 
-import { updateProfile } from '../redux/actions/authAction';
 import { useDispatch, useSelector } from 'react-redux';
 
 interface SidebarProps extends BoxProps {
@@ -37,7 +36,7 @@ const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
   };
 
   let LinkItems: Array<LinkItemProps> = [
-    { name: 'Shopping', icon: FiShoppingCart, link: '#' },
+    { name: 'Shopping', icon: FiShoppingCart, link: '/' },
   ];
 
   const LinkItemsPush = () => {
