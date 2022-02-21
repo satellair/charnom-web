@@ -30,16 +30,19 @@ type RegisterFormInputs = {
   name: string;
   email: string;
   password: string;
+  repassword: string;
 };
 
 const schema = yup.object().shape({
   name: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().min(8).required(),
+  repassword: yup.string().min(8).required(),
 });
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showRePassword, setShowRePassword] = useState(false);
   const router = useRouter();
   const toast = useToast();
 
@@ -78,6 +81,14 @@ export default function SignupPage() {
       });
     }
   };
+
+  const checkRePassword = (data: RegisterFormInputs) => {
+    if (data.password !== data.repassword) {
+      return 'Password not match';
+    }
+    return true;
+  }
+
 
   return (
     <>
@@ -144,6 +155,33 @@ export default function SignupPage() {
                         variant={'ghost'}
                         onClick={() =>
                           setShowPassword((showPassword) => !showPassword)
+                        }
+                      >
+                        {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                  <FormErrorMessage>
+                    {errors?.password?.message}
+                  </FormErrorMessage>
+                </FormControl>
+
+                <FormControl
+                  id="repassword"
+                  isInvalid={!!errors?.password?.message}
+                  isRequired
+                >
+                  <FormLabel>Retype-Password</FormLabel>
+                  <InputGroup>
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      {...register('repassword')}
+                    />
+                    <InputRightElement h={'full'}>
+                      <Button
+                        variant={'ghost'}
+                        onClick={() =>
+                          setShowRePassword(!showRePassword)
                         }
                       >
                         {showPassword ? <ViewIcon /> : <ViewOffIcon />}
