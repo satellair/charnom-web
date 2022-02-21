@@ -187,10 +187,10 @@ export default function IndexPage({ children }: { children: NextPage }) {
                           }}
                           color={useColorModeValue('gray.800', 'white')}
                         >
+                          {product.price}
                           <Box as="span" color={'gray.600'} fontSize="lg">
                             ฿
                           </Box>
-                          {product.price}
                         </Box>
                         <Tooltip
                           label="Add to cart"
