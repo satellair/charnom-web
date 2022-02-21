@@ -41,7 +41,7 @@ const Navbar = ({ onOpenSidebarDrawer, onOpenCartDrawer, ...rest }: NavProps) =>
         fontFamily="monospace"
         fontWeight="bold"
       >
-        ฌานม
+        ฌาณม
       </Text>
 
       <IconButton
