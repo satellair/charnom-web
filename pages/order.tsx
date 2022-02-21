@@ -1,8 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Box,
@@ -13,35 +12,24 @@ import {
   SimpleGrid,
   useColorModeValue,
   IconButton,
-  Tooltip,
   Stack,
   Text,
   HStack,
   Heading,
 } from '@chakra-ui/react';
-import { FiShoppingCart, FiMenu } from 'react-icons/fi';
+import { FiMenu } from 'react-icons/fi';
 
 import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
-import Cart from '../components/Carts';
 
-import { addToCart } from '../redux/actions/cartAction';
 import { updateProfile } from '../redux/actions/authAction';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { database } from '../firebase/firebaseConfig';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function IndexPage({ children }: { children: NextPage }) {
   const dispatch = useDispatch();
-  //@ts-ignore
-  const cart = useSelector((state) => state.cartReducer.cart);
-  //@ts-ignore
-  const total = useSelector((state) => state.cartReducer.total);
 
-  const router = useRouter();
-  const [productsList, setProductsList] = useState([]);
-  const productsInstance = collection(database, 'products');
   const ordersInstance = collection(database, 'orders');
 
   const {
