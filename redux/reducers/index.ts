@@ -3,7 +3,7 @@ import authReducer from "./authReducer";
 import cartReducer from "./cartReducer";
 
 const rootReducer = combineReducers({
-  cartReducer
+  authReducer, cartReducer
 });
 
 export default rootReducer;

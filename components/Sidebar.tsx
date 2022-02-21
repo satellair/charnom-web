@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   CloseButton,
@@ -11,23 +11,46 @@ import { FiShoppingCart, FiLogOut, FiLogIn, FiClock } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import NavItem from './Navitem';
 
+import { useRouter } from 'next/router';
+
+import { updateProfile } from '../redux/actions/authAction';
+import { useDispatch, useSelector } from 'react-redux';
+
 interface SidebarProps extends BoxProps {
   onClose: () => void;
 }
+
 interface LinkItemProps {
   name: string;
   icon: IconType;
   link: string;
 }
-
-const LinkItems: Array<LinkItemProps> = [
-  { name: 'Shopping', icon: FiShoppingCart, link: '/' },
-  // { name: 'Orders', icon: FiClock, link: '/order' },
-  { name: 'Sign In', icon: FiLogIn, link: '/signin' },
-  // { name: 'Sign Out', icon: FiLogOut, link: '/signout' },
-];
-
 const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
+  const router = useRouter();
+  //@ts-ignore
+  const profileRedux = useSelector((state) => state.authReducer.profile);
+
+  const Signout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('profile');
+    router.replace('/');
+  };
+
+  let LinkItems: Array<LinkItemProps> = [
+    { name: 'Shopping', icon: FiShoppingCart, link: '#' },
+  ];
+
+  const LinkItemsPush = () => {
+    if (profileRedux) {
+      LinkItems.push(
+        { name: profileRedux.name+'\'s Orders', icon: FiClock, link: '/order' },
+        { name: 'Sign Out', icon: FiLogOut, link: '/' }
+      );
+    } else {
+      LinkItems.push({ name: 'Sign In', icon: FiLogIn, link: '/signin' });
+    }
+  };
+
   return (
     <Box
       transition={{ base: '3s ease', md: 'none' }}
@@ -45,11 +68,20 @@ const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} link={link.link}>
-          {link.name}
-        </NavItem>
-      ))}
+      {LinkItemsPush()}
+      {LinkItems.map((link) =>
+        link.name === 'Sign Out' ? (
+          <Box onClick={Signout}>
+            <NavItem key={link.name} icon={link.icon} link={link.link}>
+              {link.name}
+            </NavItem>
+          </Box>
+        ) : (
+          <NavItem key={link.name} icon={link.icon} link={link.link}>
+            {link.name}
+          </NavItem>
+        )
+      )}
     </Box>
   );
 };

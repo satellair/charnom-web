@@ -24,42 +24,84 @@ import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { database } from '../firebase/firebaseConfig';
+import { checkSignin, getProfile } from '../utils/checkSignin';
+import { collection, getDocs } from 'firebase/firestore';
+
+import { useDispatch } from 'react-redux';
+import { updateProfile } from '../redux/actions/authAction';
+
 type LoginFormInputs = {
   email: string;
   password: string;
 };
 
-const schema = yup
-  .object({
-    email: yup.string().required('Email is required').email('Invalid email'),
-    password: yup
-      .string()
-      .required('Password is required')
-      .min(8, 'Password Required at least 8 characters'),
-  })
-  .required();
-
-const onSubmit = (values: LoginFormInputs) => {
-  console.log('Submitted');
-};
+const schema = yup.object().shape({
+  email: yup.string().email().required(),
+  password: yup.string().min(8).required(),
+});
 
 export default function SigninPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
   const toast = useToast();
+  const dispatch = useDispatch();
 
   const {
-    register,
     handleSubmit,
+    register,
     formState: { errors },
   } = useForm<LoginFormInputs>({
+    mode: 'onBlur',
     resolver: yupResolver(schema),
   });
+
+  const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      switch (await checkSignin(data)) {
+        case '1':
+          break;
+        case '-1':
+          throw new Error('Error: No User found');
+        case '-2':
+          throw new Error('Error: Password is incorrect');
+      }
+      const profile = await getProfile(data.email);
+      localStorage.setItem(
+        'token',
+        JSON.stringify({
+          email: data.email,
+          login_date: new Date().toLocaleDateString(),
+        })
+      );
+      localStorage.setItem('profile', JSON.stringify(profile));
+      toast({
+        title: 'Success',
+        description: 'You are now logged in',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      dispatch(updateProfile(profile));
+      router.push('/');
+      
+    } catch (err: any) {
+      toast({
+        title: 'Error',
+        description: err.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <>
       <Head>
         <title>Sign In</title>
       </Head>
+
       <Flex
         minH={'100vh'}
         align={'center'}
@@ -79,15 +121,29 @@ export default function SigninPage() {
           >
             <form>
               <Stack spacing={4}>
-                <FormControl id="email">
+                {/* email */}
+                <FormControl
+                  id="email"
+                  isInvalid={!!errors?.email?.message}
+                  isRequired
+                >
                   <FormLabel>Email address</FormLabel>
-                  <Input type="email" />
-                  <FormErrorMessage></FormErrorMessage>
+                  <Input type="email" {...register('email')} />
+                  <FormErrorMessage>{errors?.email?.message}</FormErrorMessage>
                 </FormControl>
-                <FormControl id="password">
+
+                {/* Password */}
+                <FormControl
+                  id="password"
+                  isInvalid={!!errors?.password?.message}
+                  isRequired
+                >
                   <FormLabel>Password</FormLabel>
                   <InputGroup>
-                    <Input type={showPassword ? 'text' : 'password'} />
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      {...register('password')}
+                    />
                     <InputRightElement h={'full'}>
                       <Button
                         variant={'ghost'}
@@ -99,18 +155,26 @@ export default function SigninPage() {
                       </Button>
                     </InputRightElement>
                   </InputGroup>
+                  <FormErrorMessage>
+                    {errors?.password?.message}
+                  </FormErrorMessage>
                 </FormControl>
+
                 <Stack spacing={10} pt={2}>
                   <Button
+                    loadingText="Submitting"
                     bg={'blue.400'}
                     color={'white'}
                     _hover={{
                       bg: 'blue.500',
                     }}
+                    onClick={handleSubmit(onSubmit)}
+                    disabled={!!errors.email || !!errors.password}
                   >
                     Sign in
                   </Button>
                 </Stack>
+
                 <Stack pt={6}>
                   <Text align={'center'}>
                     Not a user?{' '}

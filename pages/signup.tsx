@@ -3,6 +3,7 @@ import {
   Box,
   FormControl,
   FormLabel,
+  FormErrorMessage,
   Input,
   InputGroup,
   InputRightElement,
@@ -13,20 +14,77 @@ import {
   useColorModeValue,
   Link,
 } from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { checkSignup } from '../utils/checkSignup';
+
+type RegisterFormInputs = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+const schema = yup.object().shape({
+  name: yup.string().required(),
+  email: yup.string().email().required(),
+  password: yup.string().min(8).required(),
+});
+
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const toast = useToast();
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<RegisterFormInputs>({
+    mode: 'onBlur',
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = async (data: RegisterFormInputs) => {
+    try {
+      switch (await checkSignup(data)) {
+        case '1':
+          break;
+        case '-1':
+          throw new Error('Error: Email already exists');
+      }
+      toast({
+        title: 'Success',
+        description: `Register ${data.email} success`,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      router.push('/signin');
+    } catch (err: any) {
+      toast({
+        title: 'Error',
+        description: err.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <>
       <Head>
         <title>Sign Up</title>
       </Head>
+
       <Flex
         minH={'100vh'}
         align={'center'}
@@ -45,54 +103,86 @@ export default function SignupPage() {
             boxShadow={'lg'}
             p={8}
           >
-            <Stack spacing={4}>
-              <FormControl id="Name" isRequired>
-                <FormLabel>First Name</FormLabel>
-                <Input type="text" />
-              </FormControl>
-
-              <FormControl id="email" isRequired>
-                <FormLabel>Email address</FormLabel>
-                <Input type="email" />
-              </FormControl>
-              <FormControl id="password" isRequired>
-                <FormLabel>Password</FormLabel>
-                <InputGroup>
-                  <Input type={showPassword ? 'text' : 'password'} />
-                  <InputRightElement h={'full'}>
-                    <Button
-                      variant={'ghost'}
-                      onClick={() =>
-                        setShowPassword((showPassword) => !showPassword)
-                      }
-                    >
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
-              <Stack spacing={10} pt={2}>
-                <Button
-                  loadingText="Submitting"
-                  size="lg"
-                  bg={'blue.400'}
-                  color={'white'}
-                  _hover={{
-                    bg: 'blue.500',
-                  }}
+            <form>
+              <Stack spacing={6}>
+                {/* Name */}
+                <FormControl
+                  id="Name"
+                  isInvalid={!!errors?.name?.message}
+                  isRequired
                 >
-                  Sign up
-                </Button>
+                  <FormLabel>Name</FormLabel>
+                  <Input type="text" {...register('name')} />
+                </FormControl>
+                <FormErrorMessage>{errors?.name?.message}</FormErrorMessage>
+
+                {/* email */}
+                <FormControl
+                  id="email"
+                  isInvalid={!!errors?.email?.message}
+                  isRequired
+                >
+                  <FormLabel>Email address</FormLabel>
+                  <Input type="email" {...register('email')} />
+                  <FormErrorMessage>{errors?.email?.message}</FormErrorMessage>
+                </FormControl>
+
+                {/* Password */}
+                <FormControl
+                  id="password"
+                  isInvalid={!!errors?.password?.message}
+                  isRequired
+                >
+                  <FormLabel>Password</FormLabel>
+                  <InputGroup>
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      {...register('password')}
+                    />
+                    <InputRightElement h={'full'}>
+                      <Button
+                        variant={'ghost'}
+                        onClick={() =>
+                          setShowPassword((showPassword) => !showPassword)
+                        }
+                      >
+                        {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                  <FormErrorMessage>
+                    {errors?.password?.message}
+                  </FormErrorMessage>
+                </FormControl>
+
+                <Stack spacing={10} pt={2}>
+                  <Button
+                    loadingText="Submitting"
+                    size="lg"
+                    bg={'blue.400'}
+                    color={'white'}
+                    _hover={{
+                      bg: 'blue.500',
+                    }}
+                    onClick={handleSubmit(onSubmit)}
+                    disabled={
+                      !!errors.name || !!errors.email || !!errors.password
+                    }
+                  >
+                    Sign up
+                  </Button>
+                </Stack>
+
+                <Stack pt={6}>
+                  <Text align={'center'}>
+                    Already a user?{' '}
+                    <NextLink href="/signin" passHref>
+                      <Link color={'blue.400'}>Sign In</Link>
+                    </NextLink>
+                  </Text>
+                </Stack>
               </Stack>
-              <Stack pt={6}>
-                <Text align={'center'}>
-                  Already a user?{' '}
-                  <NextLink href="/signin" passHref>
-                    <Link color={'blue.400'}>Sign In</Link>
-                  </NextLink>
-                </Text>
-              </Stack>
-            </Stack>
+            </form>
           </Box>
         </Stack>
       </Flex>

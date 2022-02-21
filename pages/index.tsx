@@ -1,6 +1,9 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+
 import React, { useState, useEffect } from 'react';
+
 import {
   Box,
   Flex,
@@ -20,53 +23,11 @@ import Navbar from '../components/Navbar';
 import Cart from '../components/Carts';
 
 import { addToCart } from '../redux/actions/cartAction';
+import { updateProfile } from '../redux/actions/authAction';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { database } from '../firebase/firebaseConfig';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
-
-const ProductItem = [
-  {
-    id: 1,
-    name: 'Signature Charnom',
-    image:
-      'https://i.pinimg.com/564x/13/72/98/1372984fa30b23c59157499167ea64d9.jpg',
-    description: '',
-    price: 45,
-  },
-  {
-    id: 2,
-    name: 'Milk Tea',
-    image:
-      'https://firebasestorage.googleapis.com/v0/b/charnom-bymilktea.appspot.com/o/charnomkaimook.jpeg?alt=media&token=5d257e1a-5c7f-49e9-8b30-48d3d11670b9',
-    description: '',
-    price: 45,
-  },
-  {
-    id: 3,
-    name: 'Mali Tea',
-    image:
-      'https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=4600&q=80',
-    description: '',
-    price: 45,
-  },
-  {
-    id: 4,
-    name: 'Chocolate',
-    image:
-      'https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=4600&q=80',
-    description: '',
-    price: 45,
-  },
-  {
-    id: 5,
-    name: 'Boba Milk Tea',
-    image:
-      'https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=4600&q=80',
-    description: '',
-    price: 45,
-  },
-];
 
 export default function IndexPage({ children }: { children: NextPage }) {
   const dispatch = useDispatch();
@@ -74,9 +35,10 @@ export default function IndexPage({ children }: { children: NextPage }) {
   const cart = useSelector((state) => state.cartReducer.cart);
   //@ts-ignore
   const total = useSelector((state) => state.cartReducer.total);
-  const [productsList, setProductsList] = useState([]);
 
-  const customersInstance = collection(database, 'customers');
+
+  const router = useRouter();
+  const [productsList, setProductsList] = useState([]);
   const productsInstance = collection(database, 'products');
   const ordersInstance = collection(database, 'orders');
 
@@ -107,6 +69,10 @@ export default function IndexPage({ children }: { children: NextPage }) {
     getMenu();
   }, []);
 
+  useEffect(() => {
+    getProfile();
+  }, []);
+
   const getMenu = () => {
     getDocs(productsInstance).then((products) => {
       setProductsList(
@@ -117,6 +83,14 @@ export default function IndexPage({ children }: { children: NextPage }) {
       );
     });
   };
+
+  const getProfile = () => {
+    //@ts-ignore
+    const profileValue = JSON.parse(localStorage.getItem('profile'));
+    if (profileValue) {
+      dispatch(updateProfile(profileValue));
+    }
+  }
 
   return (
     <>
